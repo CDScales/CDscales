@@ -1,4 +1,5 @@
 import React from 'react';
+import { AppProvider } from './context/AppContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { WhyUs } from './components/WhyUs';
@@ -16,21 +17,23 @@ import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <Navbar />
-      <Hero />
-      <WhyUs />
-      <Services />
-      <HowItWorks />
-      <Pricing />
-      <Reviews />
-      <Portfolio />
-      <Booking />
-      <Contact />
-      <FinalCTA />
-      <Footer />
-      <Toaster position="top-right" richColors />
-    </div>
+    <AppProvider>
+      <div className="App">
+        <Navbar />
+        <Hero />
+        <WhyUs />
+        <Services />
+        <HowItWorks />
+        <Pricing />
+        <Reviews />
+        <Portfolio />
+        <Booking />
+        <Contact />
+        <FinalCTA />
+        <Footer />
+        <Toaster position="top-right" richColors />
+      </div>
+    </AppProvider>
   );
 }
 

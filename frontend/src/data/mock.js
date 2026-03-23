@@ -91,7 +91,7 @@ export const pricingPlans = [
   {
     id: 1,
     name: "Starter",
-    price: "999",
+    priceUSD: 150,
     description: "Perfect for small businesses just getting online",
     features: [
       "5-page website",
@@ -104,38 +104,37 @@ export const pricingPlans = [
   },
   {
     id: 2,
-    name: "Growth",
-    price: "1,999",
-    description: "For businesses ready to scale and convert",
-    features: [
-      "10-page website",
-      "Advanced design & animations",
-      "Lead generation forms",
-      "Advanced SEO optimization",
-      "3 months support",
-      "Analytics integration",
-      "Blog setup"
-    ],
-    popular: true
-  },
-  {
-    id: 3,
     name: "Premium",
-    price: "3,999",
-    description: "Complete solution with ongoing management",
+    priceUSD: 599,
+    description: "Complete solution with advanced features",
     features: [
       "Unlimited pages",
       "Premium custom design",
       "Advanced integrations",
       "Full SEO package",
-      "6 months support",
-      "Monthly updates",
+      "3 months support",
+      "Analytics integration",
       "Priority support",
       "Performance optimization"
     ],
-    popular: false
+    popular: true
   }
 ];
+
+export const monthlyManagement = {
+  id: "monthly",
+  name: "Website Management",
+  priceUSD: 50,
+  description: "Ongoing monthly support to keep your website fresh and performing",
+  features: [
+    "Regular content updates",
+    "Security monitoring",
+    "Performance optimization",
+    "Technical support",
+    "Monthly reports",
+    "Bug fixes included"
+  ]
+};
 
 export const whyChooseUs = [
   {

@@ -1,10 +1,13 @@
 import React from 'react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
-import { pricingPlans } from '../data/mock';
-import { Check, Star } from 'lucide-react';
+import { pricingPlans, monthlyManagement } from '../data/mock';
+import { Check, Star, Repeat } from 'lucide-react';
+import { useApp } from '../context/AppContext';
 
 export const Pricing = () => {
+  const { t, formatPrice } = useApp();
+
   const scrollToBooking = () => {
     const element = document.getElementById('booking');
     if (element) {
@@ -18,15 +21,15 @@ export const Pricing = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-            Simple, Transparent <span className="bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">Pricing</span>
+            {t.pricing.title} <span className="bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">{t.pricing.titleHighlight}</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Choose the perfect plan for your business. All plans include quality design and professional development.
+            {t.pricing.subtitle}
           </p>
         </div>
 
-        {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {/* One-Time Pricing Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
           {pricingPlans.map((plan, index) => (
             <Card 
               key={plan.id}
@@ -51,8 +54,8 @@ export const Pricing = () => {
               
               {/* Price */}
               <div className="mb-4">
-                <span className="text-5xl font-bold text-gray-900">${plan.price}</span>
-                <span className="text-gray-500 ml-2">one-time</span>
+                <span className="text-5xl font-bold text-gray-900">{formatPrice(plan.priceUSD)}</span>
+                <span className="text-gray-500 ml-2">{t.pricing.oneTime}</span>
               </div>
 
               {/* Description */}
@@ -67,7 +70,7 @@ export const Pricing = () => {
                     : 'bg-gray-900 hover:bg-purple-600 text-white'
                 }`}
               >
-                Get Started
+                {t.pricing.getStarted}
               </Button>
 
               {/* Features List */}
@@ -92,17 +95,67 @@ export const Pricing = () => {
           ))}
         </div>
 
+        {/* Monthly Management Subscription */}
+        <div className="max-w-4xl mx-auto">
+          <Card className="p-8 bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 text-white shadow-2xl border-4 border-purple-500 relative overflow-hidden">
+            {/* Background decoration */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+
+            <div className="relative z-10">
+              {/* Icon */}
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-6">
+                <Repeat className="w-8 h-8 text-white" />
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                  <h3 className="text-3xl font-bold mb-3">{t.pricing.monthlyManagement}</h3>
+                  <p className="text-purple-100 text-lg mb-6 leading-relaxed">
+                    {t.pricing.monthlyDescription}
+                  </p>
+
+                  {/* Features */}
+                  <div className="space-y-2 mb-6">
+                    {monthlyManagement.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-purple-200" />
+                        <span className="text-purple-100">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="text-center md:text-right">
+                  <div className="mb-6">
+                    <div className="text-6xl font-bold mb-2">{formatPrice(monthlyManagement.priceUSD)}</div>
+                    <div className="text-purple-200 text-xl">{t.pricing.perMonth}</div>
+                  </div>
+
+                  <Button 
+                    onClick={scrollToBooking}
+                    size="lg"
+                    className="bg-white text-purple-900 hover:bg-gray-100 font-bold px-8 py-6 text-lg transition-all duration-300 transform hover:scale-105 shadow-xl w-full md:w-auto"
+                  >
+                    {t.pricing.subscribeNow}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+
         {/* Bottom Note */}
         <div className="mt-12 text-center">
           <p className="text-gray-600 text-lg">
-            Not sure which plan is right for you?{' '}
+            {t.pricing.notSure}{' '}
             <button 
               onClick={scrollToBooking}
               className="text-purple-600 font-semibold hover:text-purple-700 underline transition-colors"
             >
-              Book a free call
+              {t.pricing.bookCall}
             </button>
-            {' '}and we'll help you choose.
+            {' '}{t.pricing.helpText}
           </p>
         </div>
       </div>
