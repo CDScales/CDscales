@@ -3,8 +3,35 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
-import { Calendar, Clock, User, Mail, Phone } from 'lucide-react';
+import { Calendar, Clock, User, Mail, Phone, Globe } from 'lucide-react';
 import { toast } from 'sonner';
+import axios from 'axios';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
+
+// Common timezones
+const timezones = [
+  { value: 'America/New_York', label: 'Eastern Time (ET)' },
+  { value: 'America/Chicago', label: 'Central Time (CT)' },
+  { value: 'America/Denver', label: 'Mountain Time (MT)' },
+  { value: 'America/Los_Angeles', label: 'Pacific Time (PT)' },
+  { value: 'Europe/London', label: 'London (GMT)' },
+  { value: 'Europe/Paris', label: 'Central European (CET)' },
+  { value: 'Europe/Warsaw', label: 'Warsaw (CET)' },
+  { value: 'Asia/Dubai', label: 'Dubai (GST)' },
+  { value: 'Asia/Kolkata', label: 'India (IST)' },
+  { value: 'Asia/Singapore', label: 'Singapore (SGT)' },
+  { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
+  { value: 'Australia/Sydney', label: 'Sydney (AEST)' },
+];
 
 export const Booking = () => {
   const [formData, setFormData] = useState({
@@ -13,8 +40,10 @@ export const Booking = () => {
     phone: '',
     preferredDate: '',
     preferredTime: '',
+    timezone: '',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -23,26 +52,46 @@ export const Booking = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Mock form submission
-    console.log('Booking submitted:', formData);
-    
-    toast.success('Call booked successfully! We\'ll contact you soon.', {
-      description: 'Check your email for confirmation details.',
-      duration: 5000,
-    });
-
-    // Reset form
+  const handleTimezoneChange = (value) => {
     setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      preferredDate: '',
-      preferredTime: '',
-      message: ''
+      ...formData,
+      timezone: value
     });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      const response = await axios.post(`${API}/booking`, formData);
+      
+      if (response.data.success) {
+        toast.success('Call booked successfully!', {
+          description: 'Check your email for confirmation details.',
+          duration: 5000,
+        });
+
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          preferredDate: '',
+          preferredTime: '',
+          timezone: '',
+          message: ''
+        });
+      }
+    } catch (error) {
+      console.error('Booking error:', error);
+      toast.error('Failed to book call', {
+        description: 'Please try again or contact us directly.',
+        duration: 5000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -122,8 +171,8 @@ export const Booking = () => {
               </div>
             </div>
 
-            {/* Preferred Date and Time */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Preferred Date, Time and Timezone */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label htmlFor="preferredDate" className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-purple-600" />
@@ -153,6 +202,25 @@ export const Booking = () => {
                   className="border-2 border-gray-200 focus:border-purple-500 focus:ring-purple-500 transition-colors"
                 />
               </div>
+
+              <div>
+                <label htmlFor="timezone" className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-purple-600" />
+                  Your Timezone *
+                </label>
+                <Select value={formData.timezone} onValueChange={handleTimezoneChange} required>
+                  <SelectTrigger className="border-2 border-gray-200 focus:border-purple-500 focus:ring-purple-500">
+                    <SelectValue placeholder="Select timezone" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {timezones.map((tz) => (
+                      <SelectItem key={tz.value} value={tz.value}>
+                        {tz.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {/* Message */}
@@ -174,9 +242,10 @@ export const Booking = () => {
             {/* Submit Button */}
             <Button 
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-semibold py-6 text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              disabled={isSubmitting}
+              className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-semibold py-6 text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Book Free Call
+              {isSubmitting ? 'Booking...' : 'Book Free Call'}
             </Button>
 
             <p className="text-center text-sm text-gray-500 mt-4">

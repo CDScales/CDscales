@@ -5,6 +5,10 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { toast } from 'sonner';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 export const Contact = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +17,7 @@ export const Contact = () => {
     subject: '',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -21,24 +26,36 @@ export const Contact = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    // Mock form submission
-    console.log('Contact form submitted:', formData);
-    
-    toast.success('Message sent successfully!', {
-      description: 'We\'ll get back to you as soon as possible.',
-      duration: 4000,
-    });
+    try {
+      const response = await axios.post(`${API}/contact`, formData);
+      
+      if (response.data.success) {
+        toast.success('Message sent successfully!', {
+          description: 'We\'ll get back to you as soon as possible.',
+          duration: 4000,
+        });
 
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
-    });
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+      }
+    } catch (error) {
+      console.error('Contact error:', error);
+      toast.error('Failed to send message', {
+        description: 'Please try again or email us directly.',
+        duration: 5000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -186,10 +203,15 @@ export const Contact = () => {
               {/* Submit Button */}
               <Button 
                 type="submit"
-                className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-semibold py-6 px-8 text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                disabled={isSubmitting}
+                className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-semibold py-6 px-8 text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Send Message
-                <Send className="ml-2 w-5 h-5" />
+                {isSubmitting ? 'Sending...' : (
+                  <>
+                    Send Message
+                    <Send className="ml-2 w-5 h-5" />
+                  </>
+                )}
               </Button>
             </form>
           </Card>
