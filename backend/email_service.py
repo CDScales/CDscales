@@ -12,9 +12,12 @@ class EmailService:
         self.smtp_host = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
         self.smtp_port = int(os.environ.get('SMTP_PORT', 587))
         self.smtp_user = os.environ.get('SMTP_USER')
-        self.smtp_password = os.environ.get('SMTP_PASSWORD')
+        self.smtp_password = os.environ.get('SMTP_PASSWORD', '').replace(' ', '')  # Remove any spaces
         self.email_from = os.environ.get('EMAIL_FROM')
         self.email_to = os.environ.get('EMAIL_TO')
+        
+        logger.info(f"Email service initialized with user: {self.smtp_user}")
+        logger.info(f"SMTP Host: {self.smtp_host}:{self.smtp_port}")
         
     def send_booking_email(self, booking_data: Dict) -> bool:
         """Send booking notification email"""
@@ -64,17 +67,28 @@ class EmailService:
             html_part = MIMEText(html_body, 'html')
             msg.attach(html_part)
             
-            # Send email
+            # Send email with detailed logging
+            logger.info(f"Attempting to send booking email to {self.email_to}")
             with smtplib.SMTP(self.smtp_host, self.smtp_port) as server:
+                server.set_debuglevel(0)
+                logger.info("Starting TLS...")
                 server.starttls()
+                logger.info(f"Logging in as {self.smtp_user}...")
                 server.login(self.smtp_user, self.smtp_password)
+                logger.info("Sending message...")
                 server.send_message(msg)
             
             logger.info(f"Booking email sent successfully for {booking_data.get('name')}")
             return True
             
+        except smtplib.SMTPAuthenticationError as e:
+            logger.error(f"SMTP Authentication failed: {str(e)}")
+            logger.error("Please verify your Gmail App Password is correct")
+            logger.error("Gmail App Password should be 16 characters without spaces")
+            return False
         except Exception as e:
             logger.error(f"Failed to send booking email: {str(e)}")
+            logger.error(f"Error type: {type(e).__name__}")
             return False
     
     def send_contact_email(self, contact_data: Dict) -> bool:
@@ -118,17 +132,28 @@ class EmailService:
             html_part = MIMEText(html_body, 'html')
             msg.attach(html_part)
             
-            # Send email
+            # Send email with detailed logging
+            logger.info(f"Attempting to send contact email to {self.email_to}")
             with smtplib.SMTP(self.smtp_host, self.smtp_port) as server:
+                server.set_debuglevel(0)
+                logger.info("Starting TLS...")
                 server.starttls()
+                logger.info(f"Logging in as {self.smtp_user}...")
                 server.login(self.smtp_user, self.smtp_password)
+                logger.info("Sending message...")
                 server.send_message(msg)
             
             logger.info(f"Contact email sent successfully from {contact_data.get('name')}")
             return True
             
+        except smtplib.SMTPAuthenticationError as e:
+            logger.error(f"SMTP Authentication failed: {str(e)}")
+            logger.error("Please verify your Gmail App Password is correct")
+            logger.error("Gmail App Password should be 16 characters without spaces")
+            return False
         except Exception as e:
             logger.error(f"Failed to send contact email: {str(e)}")
+            logger.error(f"Error type: {type(e).__name__}")
             return False
 
 # Create singleton instance
