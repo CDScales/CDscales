@@ -67,9 +67,6 @@ export const Navbar = () => {
             <button onClick={() => scrollToSection('pricing')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
               {t.nav.pricing}
             </button>
-            <button onClick={() => scrollToSection('portfolio')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
-              {t.nav.portfolio}
-            </button>
             <button onClick={() => scrollToSection('contact')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
               {t.nav.contact}
             </button>
@@ -146,9 +143,6 @@ export const Navbar = () => {
               </button>
               <button onClick={() => scrollToSection('pricing')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium text-left">
                 {t.nav.pricing}
-              </button>
-              <button onClick={() => scrollToSection('portfolio')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium text-left">
-                {t.nav.portfolio}
               </button>
               <button onClick={() => scrollToSection('contact')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium text-left">
                 {t.nav.contact}

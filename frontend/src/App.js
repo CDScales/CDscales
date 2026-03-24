@@ -7,7 +7,6 @@ import { Services } from './components/Services';
 import { HowItWorks } from './components/HowItWorks';
 import { Pricing } from './components/Pricing';
 import { Reviews } from './components/Reviews';
-import { Portfolio } from './components/Portfolio';
 import { Booking } from './components/Booking';
 import { Contact } from './components/Contact';
 import { FinalCTA } from './components/FinalCTA';
@@ -26,7 +25,6 @@ function App() {
         <HowItWorks />
         <Pricing />
         <Reviews />
-        <Portfolio />
         <Booking />
         <Contact />
         <FinalCTA />
